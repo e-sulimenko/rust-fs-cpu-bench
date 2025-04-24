@@ -1,0 +1,43 @@
+FROM occlum/occlum:latest-ubuntu20.04
+
+RUN sed -i 's|http://archive|http://ru.archive|g' /etc/apt/sources.list
+
+RUN apt-get update \
+  && apt-get install -y  \
+    build-essential  \
+    jq \
+  && rm -rf /var/lib/apt/lists/* \
+  && apt-get clean
+
+WORKDIR /app
+
+COPY . .
+
+RUN cargo build --release --bin fs-cpu-test
+
+RUN rm -rf occlum
+
+RUN occlum new occlum
+
+WORKDIR /app/occlum
+
+ARG HEAP
+ARG KERNEL_HEAP
+ARG MAX_THREADS
+
+RUN cp /usr/lib/x86_64-linux-gnu/libdl.so.2 image/opt/occlum/glibc/lib/
+
+RUN jq ' \
+    .resource_limits.user_space_size |= env.HEAP | \
+    .resource_limits.kernel_space_heap_size |= env.KERNEL_HEAP | \
+    .resource_limits.max_num_of_threads |= (env.MAX_THREADS|tonumber) \
+    ' ../Occlum.json > Occlum.json
+
+RUN cp ../target/release/fs-cpu-test image/bin
+
+RUN occlum build --sgx-mode SIM
+RUN occlum package --debug
+
+ENV _RJEM_MALLOC_CONF=retain:false,background_thread:true
+
+CMD ["occlum", "run", "/bin/fs-cpu-test"]
