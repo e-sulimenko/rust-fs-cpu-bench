@@ -1,4 +1,4 @@
-FROM occlum/occlum:latest-ubuntu20.04
+FROM occlum/occlum:0.30.0-ubuntu20.04
 
 RUN sed -i 's|http://archive|http://ru.archive|g' /etc/apt/sources.list
 
@@ -13,13 +13,17 @@ WORKDIR /app
 
 COPY . .
 
-RUN cargo build --release --bin fs-cpu-test
+RUN occlum-cargo build --release --bin fs-cpu-test
 
 RUN rm -rf occlum
 
-RUN occlum new occlum
+RUN mkdir occlum
 
 WORKDIR /app/occlum
+
+RUN occlum init && rm -rf image
+
+RUN copy_bom -f ../app.yaml --root image --include-dir /opt/occlum/etc/template
 
 ARG HEAP
 ARG KERNEL_HEAP
@@ -35,8 +39,7 @@ RUN jq ' \
 
 RUN cp ../target/release/fs-cpu-test image/bin
 
-RUN occlum build --sgx-mode SIM
-RUN occlum package --debug
+RUN occlum build --sgx-mode HW
 
 ENV _RJEM_MALLOC_CONF=retain:false,background_thread:true
 

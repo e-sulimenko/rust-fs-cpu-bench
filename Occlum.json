@@ -1,9 +1,9 @@
 {
   "resource_limits": {
-    "kernel_space_heap_size": "256MB",
+    "kernel_space_heap_size": "1GB",
     "kernel_space_stack_size": "1MB",
-    "user_space_size": "300MB",
-    "max_num_of_threads": 32
+    "user_space_size": "16GB",
+    "max_num_of_threads": 512
   },
   "process": {
     "default_stack_size": "4MB",
@@ -21,20 +21,30 @@
       "SEEK_SKIP_BYTES=",
       "READ_BYTES=",
       "MMAP_READ_BYTES=",
-      "FS_TEST_RUNS_COUNT=",
+      "FS_TEST_RUNS_COUNT=1",
       "CPU_NUM_CALCS=",
-      "CPU_NUM_ITERS=",
       "CPU_TEST_RUNS_COUNT=",
-      "CPU_MAX_THREADS="
+      "CPU_MAX_THREADS=",
+      "CPU_OPERATION_DIFFICULT_LEVEL="
     ],
     "untrusted": [
-      "EXAMPLE"
+      "MAX_WRITE_FILE_SIZE",
+      "MAX_READ_FILE_SIZE",
+      "SEEK_SKIP_BYTES",
+      "READ_BYTES",
+      "MMAP_READ_BYTES",
+      "FS_TEST_RUNS_COUNT",
+      "CPU_NUM_CALCS",
+      "CPU_TEST_RUNS_COUNT",
+      "CPU_MAX_THREADS",
+      "CPU_OPERATION_DIFFICULT_LEVEL"
     ]
   },
   "metadata": {
     "product_id": 0,
     "version_number": 0,
-    "debuggable": true,
+    "sgx_mode": "HW",
+    "debuggable": false,
     "enable_kss": false,
     "family_id": {
       "high": "0x0",
