@@ -1,4 +1,7 @@
+mod avro;
 mod cpu_test;
+mod crypto;
+mod crypto_test;
 mod fs_test;
 use dotenv::dotenv;
 
@@ -20,4 +23,5 @@ fn main() {
   if is_fs_test || is_all {
     fs_test::run_benchmark();
   }
+  crypto_test::run_benchmark();
 }
